@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telco Churn Analysis</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .insights {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .plot-container {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            min-height: 300px; /* Ensure visibility */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .nav-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Telco Customer Churn Analysis</h1>
+    </div>
+    <div class="container">
+        <div class="insights">{{ insights }}</div>
+        <div class="row">
+            {% if plots %}
+                {% for plot in plots %}
+                    <div class="col-md-6 col-lg-4 plot-container">
+                        <div id="plot{{ loop.index }}"></div>
+                        <script>
+                            try {
+                                var plotJson = '{{ plot | safe }}';
+                                console.log('Plot {{ loop.index }} JSON:', plotJson.substring(0, 100)); // Debug
+                                var plotData = JSON.parse(plotJson);
+                                Plotly.newPlot('plot{{ loop.index }}', plotData.data, plotData.layout, {responsive: true});
+                            } catch (e) {
+                                console.error('Error rendering plot {{ loop.index }}:', e);
+                            }
+                        </script>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center">No plots available.</p>
+            {% endif %}
+        </div>
+        <div class="text-center nav-btn">
+            <a href="/predict" class="btn btn-primary btn-lg">Predict Churn</a>
+        </div>
+    </div>
+    <!-- Test Plotly -->
+    <script>
+        // Test if Plotly is loaded
+        if (typeof Plotly !== 'undefined') {
+            console.log('Plotly is loaded');
+            // Simple test plot
+            Plotly.newPlot('test-plot', [{x: [1, 2, 3], y: [4, 5, 6], type: 'scatter'}], {title: 'Test Plot'}, {responsive: true});
+        } else {
+            console.error('Plotly is not loaded');
+        }
+    </script>
+    <div id="test-plot" style="margin: 20px auto; width: 50%;"></div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
